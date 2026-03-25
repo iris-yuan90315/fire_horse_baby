@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Preparation Checklist · Port Royal 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --bg:        #EFF6FF;
+    --card:      #FFFFFF;
+    --text:      #0F2A4A;
+    --muted:     #5E7A99;
+    --border:    #BFDBFE;
+    --must:      #1D4ED8; --must-bg: #EFF6FF;
+    --rec:       #0369A1; --rec-bg:  #F0F9FF;
+    --opt:       #64748B; --opt-bg:  #F8FAFC;
+    --check:     #0E7490;
+    --mama:      #7C3AED;
+    --baby:      #0284C7;
+    --papa:      #1E40AF;
+    --accent:    #1D4ED8;
+    --tab-active:#0F2A4A;
+    --blue-dark: #1E3A5F;
+    --blue-mid:  #2563EB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── App header ── */
+  .app-header { max-width: 780px; margin: 0 auto; padding: 40px 24px 0; }
+  .eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue-mid); font-weight: 600; margin-bottom: 10px; }
+  .app-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 400; color: var(--text); }
+  .app-title em { font-style: italic; color: var(--blue-mid); }
+
+  /* ── Tab bar ── */
+  .tab-bar { display: flex; gap: 4px; margin-top: 28px; border-bottom: 2px solid var(--border); align-items: flex-end; }
+  .tab-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 20px; border: none; background: transparent; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--blue-mid); border-bottom-color: var(--blue-mid); font-weight: 600; }
+  .tab-progress { margin-left: auto; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; }
+  .progress-track { width: 90px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--check); transition: width .3s; border-radius: 3px; }
+  .progress-text { font-size: 11px; color: var(--muted); white-space: nowrap; font-weight: 500; }
+
+  /* ── Tab panels ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* ── Section / item ── */
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(37,99,235,.06); }
+  .sec-head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); background: #F8FBFF; }
+  .sec-emoji { font-size: 17px; }
+  .sec-name { font-weight: 600; font-size: 14px; font-family: 'Lora', serif; color: var(--blue-dark); }
+  .sec-for { font-size: 10px; margin-left: 6px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .for-mama { background: #EDE9FE; color: #5B21B6; }
+  .for-baby { background: #E0F2FE; color: #0369A1; }
+  .for-papa { background: #DBEAFE; color: #1D4ED8; }
+  .for-all  { background: #CFFAFE; color: #0E7490; }
+  .sec-tally { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 20px; border-bottom: 1px solid #F0F7FF; cursor: pointer; transition: background .1s; }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #F5F9FF; }
+  .cb { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #93C5FD; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .item.done .cb { background: var(--check); border-color: var(--check); }
+  .cb svg { display: none; }
+  .item.done .cb svg { display: block; }
+  .item-body { flex: 1; }
+  .item-name { font-size: 13px; line-height: 1.5; color: var(--text); }
+  .item.done .item-name { color: #93C5FD; text-decoration: line-through; }
+  .tags { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+  .tag { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; }
+  .tag-must { background: var(--must-bg); color: var(--must); border: 1px solid #BFDBFE; }
+  .tag-rec  { background: var(--rec-bg);  color: var(--rec); border: 1px solid #BAE6FD; }
+  .tag-opt  { background: var(--opt-bg);  color: var(--opt); border: 1px solid #E2E8F0; }
+  .tag-qty  { background: #F0FDFA; color: #0F766E; border: 1px solid #99F6E4; }
+  .tag-note { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .pill-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .pill-btn:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+  .pill-all  { background: var(--blue-dark); color: #fff; border-color: var(--blue-dark); }
+  .pill-mama { background: #7C3AED; color: #fff; border-color: #7C3AED; }
+  .pill-baby { background: var(--baby); color: #fff; border-color: var(--baby); }
+  .pill-papa { background: var(--papa); color: #fff; border-color: var(--papa); }
+  .pill-must { background: var(--must); color: #fff; border-color: var(--must); }
+  .pill-rec  { background: var(--rec);  color: #fff; border-color: var(--rec); }
+  .pill-opt  { background: var(--opt);  color: #fff; border-color: var(--opt); }
+
+  /* ── Hospital header ── */
+  .hosp-header { margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 22px; }
+  .hosp-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--blue-mid); font-weight: 600; margin-bottom: 8px; }
+  .hosp-sub { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .info-card { background: #F0F7FF; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .info-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+  .info-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* ── Tip box ── */
+  .tip-box { background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; }
+  .tip-title { font-size: 11px; font-weight: 600; color: var(--blue-dark); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .06em; }
+  .tip-text { font-size: 13px; color: #1E3A5F; line-height: 1.65; }
+  .tip-text strong { color: var(--blue-mid); }
+
+  /* ── Essentials header ── */
+  .ess-header { margin-bottom: 24px; }
+  .meta-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-chip { font-size: 11px; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; }
+
+  footer { text-align: center; margin-top: 40px; font-size: 12px; color: #93C5FD; }
+  @media print {
+    body { background: white; }
+    .tab-bar { display: none; }
+    .tab-panel { display: block !important; }
+    .section { break-inside: avoid; box-shadow: none; }
+    .sec-head { background: #f8f8f8; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="eyebrow">Baby Preparation · Paris, France · July 2026</div>
+  <div class="app-title">Baby Checklist &nbsp;<em>/ Checklist bébé</em></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('hospital', this)">🏥 Hospital Bag · Port Royal</button>
+    <button class="tab-btn" onclick="switchTab('essentials', this)">🛍️ Essentials Shopping</button>
+    <div class="tab-progress">
+      <div class="progress-track"><div class="progress-fill" id="global-pf" style="width:0%"></div></div>
+      <span class="progress-text" id="global-pt">Overall 0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 1: Hospital bag ══ -->
+<div id="tab-hospital" class="tab-panel active">
+  <div class="page">
+    <div class="hosp-header">
+      <div class="hosp-tag">🏥 Maternité Port Royal · Paris 14e</div>
+      <div class="hosp-sub">
+        One of France's top maternity hospitals. Expected stay: 2–4 days (vaginal birth) / 4–5 days (C-section).<br>
+        Pack by <strong>week 36</strong>. Prepare <strong>3 separate bags</strong>: Mum · Baby · Partner.
+      </div>
+      <div class="info-grid">
+        <div class="info-card"><div class="info-label">Hospital</div><div class="info-val">Maternité Port Royal</div></div>
+        <div class="info-card"><div class="info-label">Address</div><div class="info-val">53 Av. de l'Observatoire, 75014</div></div>
+        <div class="info-card"><div class="info-label">Emergency entrance</div><div class="info-val">24h/24 — entrée urgences</div></div>
+        <div class="info-card"><div class="info-label">Expected stay</div><div class="info-val">Vaginal 2–4d / C-section 4–5d</div></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-title">💡 Port Royal — What the hospital provides</div>
+      <div class="tip-text">
+        Provided by the hospital: meals, basic toiletries, newborn clothing.<br>
+        <strong>You must bring:</strong> mum's personal items, baby's going-home outfit, and the <em>siège auto</em> (car seat — mandatory to leave).<br>
+        For birth registration (<em>déclaration de naissance</em>), the partner must visit the local <em>mairie</em> within 5 days.
+      </div>
+    </div>
+
+    <div class="toolbar" id="hosp-toolbar">
+      <button class="pill-btn pill-all" onclick="setFilter('hosp','all',this)">All</button>
+      <button class="pill-btn" onclick="setFilter('hosp','mama',this)">👩 Mum</button>
+      <button class="pill-btn" onclick="setFilter('hosp','baby',this)">👶 Baby</button>
+      <button class="pill-btn" onclick="setFilter('hosp','papa',this)">👨 Partner</button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+        <div class="progress-track"><div class="progress-fill" id="hosp-pf"></div></div>
+        <span class="progress-text" id="hosp-pt">0 / 0</span>
+      </div>
+    </div>
+    <div id="hosp-list"></div>
+    <footer>Maternité Port Royal · Click to check items as you pack</footer>
+  </div>
+</div>
+
+<!-- ══ TAB 2: Essentials shopping ══ -->
+<div id="tab-essentials" class="tab-panel">
+  <div class="page">
+    <div class="ess-header">
+      <div class="hosp-tag">🛍️ Baby Essentials · Boy · July 2026 · Paris</div>
+      <div class="hosp-sub">70+ items across 8 categories. Optimised for France — includes brand tips and second-hand advice.</div>
+      <div class="meta-row">
+        <span class="meta-chip">🔵 Must = ready before discharge</span>
+        <span class="meta-chip">🩵 Recommended = within 1 month</span>
+        <span class="meta-chip">⬜ Optional = as needed</span>
+      </div>
+    </div>
+
+    <div class="toolbar" id="ess-toolbar">
+      <button class="pill-btn pill-all" onclick="setFilter('ess','all',this)">All</button>
+      <button class="pill-btn" onclick="setFilter('ess','must',this)">Must</button>
+      <button class="pill-btn" onclick="setFilter('ess','rec',this)">Recommended</button>
+      <button class="pill-btn" onclick="setFilter('ess','opt',this)">Optional</button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+        <div class="progress-track"><div class="progress-fill" id="ess-pf"></div></div>
+        <span class="progress-text" id="ess-pt">0 / 0</span>
+      </div>
+    </div>
+    <div id="ess-list"></div>
+    <footer>Baby Essentials · Click to check items as you purchase</footer>
+  </div>
+</div>
+
+<script>
+const hospCats = [
+  { name:"Documents & ID", emoji:"📋", for:"all", items:[
+    {n:"Carte Vitale (mum's health insurance card)",w:"mama",p:"must"},
+    {n:"Carte de mutuelle (complementary insurance)",w:"mama",p:"must"},
+    {n:"ID — Passeport / Titre de séjour",w:"mama",p:"must"},
+    {n:"Carnet de maternité (pregnancy booklet)",w:"mama",p:"must",note:"Required by the team"},
+    {n:"Documents for birth registration — marriage cert / PACS / both IDs",w:"papa",p:"must",note:"Déclaration de naissance within 5 days"},
+    {n:"Pre-admission form (if completed)",w:"mama",p:"rec"},
+    {n:"Insurance contact details note",w:"papa",p:"rec"},
+  ]},
+  { name:"Mum — Labour", emoji:"🤱", for:"mama", items:[
+    {n:"Loose zip-up cardigan or hoodie",w:"mama",p:"must"},
+    {n:"Non-slip slippers",w:"mama",p:"must"},
+    {n:"Hair ties / clips",w:"mama",p:"must"},
+    {n:"Lip balm",w:"mama",p:"rec",note:"Lips dry quickly during labour"},
+    {n:"Portable fan / water mist spray",w:"mama",p:"rec",note:"Delivery room can get warm"},
+    {n:"Power bank + charging cable",w:"mama",p:"must"},
+    {n:"Earphones",w:"mama",p:"rec"},
+    {n:"Snacks (labour can be long)",w:"mama",p:"rec"},
+  ]},
+  { name:"Mum — Hospital Stay (2–4 days)", emoji:"👩‍⚕️", for:"mama", items:[
+    {n:"Postpartum underwear — large disposable or washable",w:"mama",p:"must",q:"×7"},
+    {n:"Nursing bras",w:"mama",p:"must",q:"×3",note:"Hospital will support breastfeeding initiation"},
+    {n:"Maternity pads — heavy flow",w:"mama",p:"must",q:"×2 packs",note:"Hospital may provide, bring your own"},
+    {n:"Front-opening pyjamas / nightgown",w:"mama",p:"must",q:"×2 sets"},
+    {n:"Bathrobe",w:"mama",p:"rec"},
+    {n:"Toiletry bag — toothbrush, cleanser, skincare, shampoo",w:"mama",p:"must"},
+    {n:"Towels",w:"mama",p:"must",q:"×2"},
+    {n:"Nipple cream — lanoline (lanolin)",w:"mama",p:"must",note:"Use from first feed"},
+    {n:"Breast pads — disposable",w:"mama",p:"must",q:"×1 box"},
+    {n:"Going-home outfit — loose and comfortable",w:"mama",p:"must"},
+    {n:"Glasses (if you wear contact lenses)",w:"mama",p:"rec"},
+    {n:"Phone stand (for video calls)",w:"mama",p:"opt"},
+  ]},
+  { name:"Baby — In Hospital", emoji:"👶", for:"baby", items:[
+    {n:"Bodysuits (bodies) — NB / 1M size",w:"baby",p:"must",q:"×3",note:"Hospital provides some, still bring yours"},
+    {n:"Sleepsuits (pyjamas)",w:"baby",p:"must",q:"×3"},
+    {n:"Newborn hats (bonnet)",w:"baby",p:"must",q:"×2"},
+    {n:"Baby socks",w:"baby",p:"must",q:"×3 pairs"},
+    {n:"Muslin swaddle wrap (lange)",w:"baby",p:"must",q:"×2"},
+    {n:"Nappies — NB size",w:"baby",p:"must",q:"×small pack",note:"Hospital usually provides, bring as backup"},
+    {n:"Baby wipes",w:"baby",p:"must",q:"×1 pack"},
+  ]},
+  { name:"Baby — Discharge Day", emoji:"🚗", for:"baby", items:[
+    {n:"Going-home outfit — bodysuit + jacket + hat",w:"baby",p:"must",note:"July — keep it lightweight"},
+    {n:"Car seat installed in the car (siège auto)",w:"baby",p:"must",note:"⚠️ Cannot leave without one — French law"},
+    {n:"Pram / pushchair ready in the car",w:"baby",p:"rec"},
+  ]},
+  { name:"Partner / Birth Support Bag", emoji:"👨", for:"papa", items:[
+    {n:"Change of clothes (2 nights' worth)",w:"papa",p:"must"},
+    {n:"Toiletries",w:"papa",p:"must"},
+    {n:"Snacks + water",w:"papa",p:"must",note:"Corridor vending may be limited"},
+    {n:"Power bank + multi-port charger",w:"papa",p:"must"},
+    {n:"Camera / phone — check storage",w:"papa",p:"must"},
+    {n:"Small cash (vending machines, parking)",w:"papa",p:"rec"},
+    {n:"Birth registration documents",w:"papa",p:"must",note:"Visit mairie within 5 days of birth"},
+    {n:"Discharge transport arranged — Taxi / VTC / car",w:"papa",p:"must"},
+  ]},
+  { name:"Nice to Have", emoji:"✨", for:"all", items:[
+    {n:"Birth ball (ballon d'accouchement)",w:"mama",p:"opt",note:"Hospital usually has one"},
+    {n:"TENS pain relief device (natural birth)",w:"mama",p:"opt"},
+    {n:"Music playlist — downloaded offline",w:"mama",p:"opt"},
+    {n:"Ice packs (perineal recovery)",w:"mama",p:"opt"},
+    {n:"Props for baby's first photo",w:"baby",p:"opt",note:"Midwives often offer to take photos"},
+  ]},
+];
+
+const essCats = [
+  { name:"Sleep", emoji:"🛏️", items:[
+    {n:"Cot / moses basket (lit bébé / couffin)",p:"must",q:"×1",note:"Ready before discharge"},
+    {n:"Mattress — NF EN 16890 certified",p:"must",q:"×1",note:"French safety standard"},
+    {n:"Waterproof mattress protectors",p:"must",q:"×2"},
+    {n:"Summer sleeping bag (gigoteuse) — 0.5 TOG",p:"must",q:"×2–3",note:"Replaces blankets — official French guidance"},
+    {n:"Autumn/winter sleeping bag — 2.5 TOG",p:"rec",q:"×2",note:"For October onwards"},
+    {n:"Cotton fitted sheets",p:"must",q:"×3–4"},
+    {n:"White noise machine",p:"opt"},
+  ]},
+  { name:"Feeding", emoji:"🍼", items:[
+    {n:"Nursing bras",p:"must",q:"×3–4"},
+    {n:"Nipple shields (coquilles d'allaitement)",p:"must",q:"×1 set"},
+    {n:"Disposable breast pads",p:"must",q:"×multiple boxes"},
+    {n:"Breast pump — manual or electric",p:"must",note:"Partially reimbursed by French health insurance"},
+    {n:"Milk storage bags / bottles",p:"rec",q:"×30+"},
+    {n:"Baby bottles (for mixed feeding)",p:"rec",q:"×2",note:"Can wait if exclusively breastfeeding"},
+    {n:"Steriliser or steriliser bags",p:"rec"},
+    {n:"Formula (one tin as backup)",p:"opt",note:"In case milk supply is low"},
+    {n:"Nursing pillow (coussin d'allaitement)",p:"rec",q:"×1"},
+    {n:"Nipple cream — lanoline (lanolin)",p:"must"},
+  ]},
+  { name:"Nappy Changing", emoji:"🧴", items:[
+    {n:"Changing table / changing mat",p:"must",q:"×1"},
+    {n:"Nappies — NB / size 1 (couches)",p:"must",q:"×2–3 packs",note:"Don't stockpile — babies grow fast"},
+    {n:"Fragrance-free baby wipes",p:"must",q:"×multiple packs"},
+    {n:"Nappy cream (crème protectrice)",p:"must"},
+    {n:"Waterproof changing pads — small",p:"must",q:"×3–4"},
+    {n:"Dry cotton wipes",p:"rec",q:"×multiple packs"},
+    {n:"Nappy bin (poubelle à couches)",p:"opt"},
+  ]},
+  { name:"Bath & Skincare", emoji:"🛁", items:[
+    {n:"Baby bath tub (baignoire bébé)",p:"must",q:"×1"},
+    {n:"Baby wash / shampoo 2-in-1",p:"must",note:"Mustela / Biolane — widely used in France"},
+    {n:"Baby moisturiser",p:"must"},
+    {n:"Hooded towels",p:"must",q:"×3"},
+    {n:"Baby nail scissors / file",p:"must"},
+    {n:"Baby thermometer — rectal is most accurate",p:"must"},
+    {n:"Nasal aspirator (mouche-bébé)",p:"must",note:"Oral suction type — a French household staple"},
+    {n:"Baby cotton buds",p:"must"},
+  ]},
+  { name:"Clothing (0–3 months · Summer)", emoji:"👕", items:[
+    {n:"Short-sleeve bodysuits (bodies) — 1M / 3M",p:"must",q:"×6–8",note:"French sizing: NB / 1M / 3M"},
+    {n:"Long-sleeve sleepsuits (pyjamas)",p:"must",q:"×4–5"},
+    {n:"Newborn hats (bonnet)",p:"must",q:"×3"},
+    {n:"Footed sleepsuits (grenouillères)",p:"rec",q:"×3–4"},
+    {n:"Baby socks",p:"rec",q:"×5–6 pairs"},
+    {n:"Lightweight jacket / windbreaker",p:"rec",q:"×1",note:"For air-conditioned spaces"},
+    {n:"Bibs (bavoirs)",p:"must",q:"×8–10"},
+    {n:"Muslin squares (lange mousseline)",p:"must",q:"×4–5",note:"Multi-use: swaddle / shade / nursing cover"},
+  ]},
+  { name:"Travel & Out & About", emoji:"🚗", items:[
+    {n:"Car seat — group 0 / 0+ (siège auto)",p:"must",q:"×1",note:"French law — required to leave hospital"},
+    {n:"Lie-flat pram / pushchair (poussette)",p:"must",q:"×1"},
+    {n:"Baby carrier / sling (porte-bébé)",p:"rec",q:"×1",note:"Ergonomic / physiological position recommended"},
+    {n:"Sun shade (car seat + pram)",p:"must",note:"Essential — July heat in Paris"},
+    {n:"Mosquito net (pram)",p:"rec",note:"Summer outdoor use"},
+    {n:"Changing bag (sac à langer)",p:"must",q:"×1"},
+  ]},
+  { name:"Medical & Health", emoji:"💊", items:[
+    {n:"Infant paracetamol — Doliprane enfants",p:"must",note:"Buy before birth"},
+    {n:"Saline nasal spray (sérum physiologique)",p:"must",note:"For eyes and nose — every French household has this"},
+    {n:"Vitamin D drops (Adrigyl / Zymad)",p:"must",note:"Prescribed from birth — French paediatric standard"},
+    {n:"First aid manual / infant CPR course",p:"rec",note:"Recommended before birth"},
+  ]},
+  { name:"Home Environment", emoji:"🏠", items:[
+    {n:"Video baby monitor (babyphone)",p:"rec",q:"×1"},
+    {n:"Air humidifier",p:"rec",note:"For dry winter heating season"},
+    {n:"Room thermometer / hygrometer",p:"must",note:"Ideal temp 18–20°C"},
+    {n:"Blackout curtains (rideaux occultants)",p:"rec",note:"Helps establish day/night rhythm"},
+  ]},
+];
+
+// ── STATE ──────────────────────────────────────────────────────────
+const state = { hosp: {}, ess: {} };
+const filters = { hosp: 'all', ess: 'all' };
+
+// ── RENDER ──────────────────────────────────────────────────────────
+function buildList(ns, cats, filterFn) {
+  const list = document.getElementById(ns + '-list');
+  list.innerHTML = '';
+  let total = 0, done = 0;
+
+  cats.forEach((cat, ci) => {
+    const items = cat.items.filter(filterFn);
+    if (!items.length) return;
+
+    const chk = items.filter((_,ii) => state[ns][`${ci}-${cat.items.indexOf(items[ii])}`]).length;
+    const forLabel = (cat.for === 'mama') ? '<span class="sec-for for-mama">Mum</span>' :
+                     (cat.for === 'baby') ? '<span class="sec-for for-baby">Baby</span>' :
+                     (cat.for === 'papa') ? '<span class="sec-for for-papa">Partner</span>' :
+                                            '<span class="sec-for for-all">All</span>';
+
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.innerHTML = `
+      <div class="sec-head">
+        <span class="sec-emoji">${cat.emoji}</span>
+        <span class="sec-name">${cat.name}</span>
+        ${cat.for ? forLabel : ''}
+        <span class="sec-tally">${chk}/${items.length}</span>
+      </div>
+      ${items.map(item => {
+        const idx = cat.items.indexOf(item);
+        const key = `${ci}-${idx}`;
+        const d = !!state[ns][key];
+        total++; if (d) done++;
+        return `<div class="item${d?' done':''}" onclick="toggle('${ns}','${key}')">
+          <div class="cb"><svg width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item-body">
+            <div class="item-name">${item.n}</div>
+            <div class="tags">
+              <span class="tag tag-${item.p}">${item.p==='must'?'Must':item.p==='rec'?'Recommended':'Optional'}</span>
+              ${item.q    ? `<span class="tag tag-qty">${item.q}</span>`    : ''}
+              ${item.note ? `<span class="tag tag-note">${item.note}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}`;
+    list.appendChild(div);
+  });
+
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById(ns+'-pf').style.width = pct+'%';
+  document.getElementById(ns+'-pt').textContent = `${done} / ${total}`;
+  updateGlobal();
+}
+
+function buildHosp() { buildList('hosp', hospCats, it => filters.hosp === 'all' || it.w === filters.hosp); }
+function buildEss()  { buildList('ess',  essCats,  it => filters.ess  === 'all' || it.p === filters.ess);  }
+
+function toggle(ns, key) {
+  state[ns][key] = !state[ns][key];
+  ns === 'hosp' ? buildHosp() : buildEss();
+}
+
+function updateGlobal() {
+  const hospTotal = hospCats.reduce((a,c)=>a+c.items.length,0);
+  const essTotal  = essCats.reduce((a,c)=>a+c.items.length,0);
+  const total = hospTotal + essTotal;
+  const done  = Object.values(state.hosp).filter(Boolean).length + Object.values(state.ess).filter(Boolean).length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  document.getElementById('global-pf').style.width = pct+'%';
+  document.getElementById('global-pt').textContent = `Overall ${pct}%`;
+}
+
+function setFilter(ns, val, btn) {
+  filters[ns] = val;
+  document.getElementById(ns+'-toolbar').querySelectorAll('.pill-btn').forEach(b => b.className = 'pill-btn');
+  const colorMap = {all:'pill-all',mama:'pill-mama',baby:'pill-baby',papa:'pill-papa',must:'pill-must',rec:'pill-rec',opt:'pill-opt'};
+  btn.classList.add('pill-btn', colorMap[val] || 'pill-all');
+  ns === 'hosp' ? buildHosp() : buildEss();
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+buildHosp();
+buildEss();
+</script>
+</body>
+</html>
